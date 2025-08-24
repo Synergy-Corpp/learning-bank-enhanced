@@ -27,7 +27,7 @@ const db = new sqlite3.Database(':memory:', (err) => {
 
 // Initialize database tables
 function initializeDatabase() {
-    // Users table
+    // Users table - GOD MODE: USA Banking Compliance with Approval System
     db.run(`
         CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,7 +35,12 @@ function initializeDatabase() {
             lastName TEXT NOT NULL,
             email TEXT UNIQUE NOT NULL,
             password TEXT NOT NULL,
-            balance REAL DEFAULT 1000.00,
+            balance REAL DEFAULT 0.00,
+            status TEXT DEFAULT 'pending_approval',
+            userID TEXT UNIQUE,
+            serialNumber TEXT UNIQUE,
+            approvedAt DATETIME,
+            approvedBy TEXT,
             createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     `);
@@ -153,11 +158,15 @@ app.post('/api/register', async (req, res) => {
         // Hash password
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
+        
+        // Generate User ID and Serial Number - USA Banking Compliance
+        const userID = generateUserID();
+        const serialNumber = generateSerialNumber();
 
-        // Insert user into database
+        // Insert user into database - NO AUTO LOGIN, AWAITS APPROVAL
         db.run(
-            'INSERT INTO users (firstName, lastName, email, password) VALUES (?, ?, ?, ?)',
-            [firstName, lastName, email, hashedPassword],
+            'INSERT INTO users (firstName, lastName, email, password, userID, serialNumber, status, balance) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [firstName, lastName, email, hashedPassword, userID, serialNumber, 'pending_approval', 0.00],
             function(err) {
                 if (err) {
                     if (err.code === 'SQLITE_CONSTRAINT') {
@@ -166,22 +175,19 @@ app.post('/api/register', async (req, res) => {
                     return res.status(500).json({ error: 'Failed to create user' });
                 }
 
-                // Generate JWT token
-                const token = jwt.sign(
-                    { userId: this.lastID, email: email },
-                    JWT_SECRET,
-                    { expiresIn: '24h' }
-                );
-
+                // NO TOKEN PROVIDED - User must wait for approval
                 res.status(201).json({
-                    message: 'User created successfully',
-                    token: token,
-                    user: {
-                        id: this.lastID,
-                        firstName,
-                        lastName,
-                        email,
-                        balance: 1000.00
+                    success: true,
+                    message: 'Account registration submitted successfully',
+                    userID: userID,
+                    serialNumber: serialNumber,
+                    status: 'pending_approval',
+                    instructions: 'Your account is pending approval. Check back with your User ID and Serial Number for status updates.',
+                    checkBackInstructions: {
+                        userID: userID,
+                        serialNumber: serialNumber,
+                        estimatedTime: '24-48 hours',
+                        nextSteps: 'You will receive access once approved by our Federal Banking Team'
                     }
                 });
             }
@@ -220,8 +226,20 @@ app.post('/api/login', async (req, res) => {
                 if (!isValidPassword) {
                     return res.status(401).json({ error: 'Invalid email or password' });
                 }
+                
+                // CHECK APPROVAL STATUS - GOD MODE: USA Banking Compliance
+                if (user.status !== 'approved') {
+                    return res.status(403).json({ 
+                        error: 'Account not approved', 
+                        status: user.status,
+                        userID: user.userID,
+                        serialNumber: user.serialNumber,
+                        message: 'Your account is still pending approval. Please check back later.',
+                        instructions: 'Contact admin or check back with your User ID and Serial Number for approval status.'
+                    });
+                }
 
-                // Generate JWT token
+                // Generate JWT token - ONLY FOR APPROVED USERS
                 const token = jwt.sign(
                     { userId: user.id, email: user.email },
                     JWT_SECRET,
@@ -229,14 +247,17 @@ app.post('/api/login', async (req, res) => {
                 );
 
                 res.json({
-                    message: 'Login successful',
+                    message: 'Login successful - Welcome to Learning Bank USA',
                     token: token,
                     user: {
                         id: user.id,
                         firstName: user.firstName,
                         lastName: user.lastName,
                         email: user.email,
-                        balance: user.balance
+                        balance: user.balance,
+                        status: user.status,
+                        userID: user.userID,
+                        serialNumber: user.serialNumber
                     }
                 });
             }
@@ -625,6 +646,146 @@ function createDemoData() {
         });
     }, 1000);
 }
+
+// GOD MODE - UTILITY FUNCTIONS FOR USA BANKING COMPLIANCE
+function generateUserID() {
+    const prefix = 'USA';
+    const timestamp = Date.now().toString().slice(-6);
+    const random = Math.floor(Math.random() * 999).toString().padStart(3, '0');
+    return `${prefix}${timestamp}${random}`;
+}
+
+function generateSerialNumber() {
+    const serial = 'LB' + Date.now().toString(36).toUpperCase() + 
+                 Math.random().toString(36).substr(2, 4).toUpperCase();
+    return serial;
+}
+
+// STATUS CHECK ENDPOINT - Users can check their approval status
+app.post('/api/check-status', (req, res) => {
+    try {
+        const { userID, serialNumber } = req.body;
+        
+        if (!userID || !serialNumber) {
+            return res.status(400).json({ 
+                error: 'User ID and Serial Number are required',
+                instructions: 'Please provide both your User ID and Serial Number to check your account status.'
+            });
+        }
+        
+        db.get(
+            'SELECT id, firstName, lastName, email, status, userID, serialNumber, createdAt, approvedAt, approvedBy FROM users WHERE userID = ? AND serialNumber = ?',
+            [userID, serialNumber],
+            (err, user) => {
+                if (err) {
+                    return res.status(500).json({ error: 'Database error' });
+                }
+                
+                if (!user) {
+                    return res.status(404).json({ 
+                        error: 'User not found',
+                        message: 'No account found with the provided User ID and Serial Number.',
+                        instructions: 'Please verify your credentials or contact support.'
+                    });
+                }
+                
+                // Status response based on approval state
+                const statusMessages = {
+                    'pending_approval': {
+                        title: '⏳ Account Pending Approval',
+                        message: 'Your account is currently under review by our Federal Banking Team.',
+                        estimatedTime: '24-48 hours from submission',
+                        nextSteps: 'Please check back later. You will be notified once approved.'
+                    },
+                    'under_review': {
+                        title: '🔍 Account Under Review',
+                        message: 'Your account is being actively reviewed by our compliance team.',
+                        estimatedTime: '12-24 hours',
+                        nextSteps: 'Final verification in progress. Please check back soon.'
+                    },
+                    'approved': {
+                        title: '✅ Account Approved',
+                        message: 'Congratulations! Your Learning Bank USA account has been approved.',
+                        estimatedTime: 'Ready now',
+                        nextSteps: 'You can now log in to access your banking services.',
+                        approvedDetails: {
+                            approvedAt: user.approvedAt,
+                            approvedBy: user.approvedBy || 'Federal Banking Team'
+                        }
+                    },
+                    'rejected': {
+                        title: '❌ Account Application Rejected',
+                        message: 'Unfortunately, your account application could not be approved at this time.',
+                        nextSteps: 'Please contact our support team for more information.'
+                    }
+                };
+                
+                const statusInfo = statusMessages[user.status] || statusMessages['pending_approval'];
+                
+                res.json({
+                    success: true,
+                    userID: user.userID,
+                    serialNumber: user.serialNumber,
+                    applicantName: `${user.firstName} ${user.lastName}`,
+                    email: user.email,
+                    status: user.status,
+                    submittedAt: user.createdAt,
+                    statusInfo: statusInfo,
+                    federalNotice: 'IN GOD WE TRUST - Learning Bank USA Federal Compliance System'
+                });
+            }
+        );
+    } catch (error) {
+        console.error('Status check error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// ADMIN ENDPOINT - Approve user accounts
+app.post('/api/admin/approve-user', authenticateToken, (req, res) => {
+    try {
+        const { userID, status, startingBalance = 1000.00 } = req.body;
+        
+        if (!userID || !status) {
+            return res.status(400).json({ error: 'User ID and status are required' });
+        }
+        
+        const validStatuses = ['approved', 'rejected', 'under_review'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        
+        // Update user status and balance
+        const updateQuery = status === 'approved' ? 
+            'UPDATE users SET status = ?, balance = ?, approvedAt = CURRENT_TIMESTAMP, approvedBy = ? WHERE userID = ?' :
+            'UPDATE users SET status = ?, approvedAt = CURRENT_TIMESTAMP, approvedBy = ? WHERE userID = ?';
+            
+        const params = status === 'approved' ? 
+            [status, startingBalance, 'Admin', userID] :
+            [status, 'Admin', userID];
+        
+        db.run(updateQuery, params, function(err) {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to update user status' });
+            }
+            
+            if (this.changes === 0) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            
+            res.json({
+                success: true,
+                message: `User ${userID} status updated to ${status}`,
+                userID: userID,
+                status: status,
+                balance: status === 'approved' ? startingBalance : 0
+            });
+        });
+    } catch (error) {
+        console.error('User approval error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

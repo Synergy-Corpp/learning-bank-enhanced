@@ -211,10 +211,9 @@ signupForm.addEventListener('submit', async (e) => {
         const response = await apiSignup(firstName, lastName, email, password);
         
         if (response.success) {
-            alert('Account created successfully! Welcome to Learning Bank.');
+            // NO AUTO REDIRECT - Show approval notification
             closeModal(signupModal);
-            // Redirect to dashboard
-            window.location.href = 'dashboard.html';
+            showAccountPendingNotification(response);
         } else {
             alert('Signup failed: ' + response.message);
         }
@@ -269,13 +268,15 @@ async function apiSignup(firstName, lastName, email, password) {
     const result = await response.json();
     
     if (response.ok) {
-        // Store token and user info
-        localStorage.setItem('bankToken', result.token);
-        localStorage.setItem('currentUser', JSON.stringify(result.user));
-        
+        // NO TOKEN STORAGE - Response contains approval info instead
         return {
             success: true,
-            user: result.user
+            userID: result.userID,
+            serialNumber: result.serialNumber,
+            status: result.status,
+            instructions: result.instructions,
+            checkBackInstructions: result.checkBackInstructions,
+            message: result.message
         };
     } else {
         return {
@@ -395,10 +396,203 @@ function validateEmail() {
     }
 }
 
+// GOD MODE - ACCOUNT APPROVAL NOTIFICATION SYSTEM
+function showAccountPendingNotification(signupResponse) {
+    // Create beautiful USA federal notification
+    const notification = document.createElement('div');
+    notification.className = 'account-pending-notification';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <div class="usa-header">🇺🇸 LEARNING BANK USA 🇺🇸</div>
+            <div class="trust-line">IN GOD WE TRUST</div>
+            
+            <h3>🏦 ACCOUNT APPLICATION SUBMITTED</h3>
+            
+            <div class="application-details">
+                <p><strong>Your Federal Banking ID:</strong> ${signupResponse.userID}</p>
+                <p><strong>Serial Number:</strong> ${signupResponse.serialNumber}</p>
+                <p><strong>Status:</strong> PENDING FEDERAL APPROVAL</p>
+            </div>
+            
+            <div class="important-notice">
+                <h4>📋 IMPORTANT INSTRUCTIONS:</h4>
+                <p>✓ Your account is under review by our Federal Banking Team</p>
+                <p>✓ You CANNOT login until approved</p>
+                <p>✓ Check back with your ID and Serial Number</p>
+                <p>✓ Estimated review time: ${signupResponse.checkBackInstructions.estimatedTime}</p>
+            </div>
+            
+            <div class="check-status-section">
+                <h4>🔍 Check Your Status:</h4>
+                <input type="text" id="statusCheckUserID" placeholder="Enter your User ID" value="${signupResponse.userID}">
+                <input type="text" id="statusCheckSerial" placeholder="Enter your Serial Number" value="${signupResponse.serialNumber}">
+                <button onclick="checkApplicationStatus()" class="btn btn-primary status-check-btn">
+                    Check Status
+                </button>
+            </div>
+            
+            <div class="federal-notice">
+                <small>🏛️ FDIC Insured • Federal Banking Regulations Apply</small>
+            </div>
+            
+            <button onclick="this.parentElement.parentElement.remove()" class="close-notification">
+                UNDERSTOOD ✓
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto-remove after 30 seconds if not closed
+    setTimeout(() => {
+        if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+        }
+    }, 30000);
+}
+
+// STATUS CHECKING SYSTEM
+async function checkApplicationStatus() {
+    const userID = document.getElementById('statusCheckUserID')?.value || document.getElementById('quickStatusUserID')?.value;
+    const serialNumber = document.getElementById('statusCheckSerial')?.value || document.getElementById('quickStatusSerial')?.value;
+    
+    if (!userID || !serialNumber) {
+        alert('🚫 Please enter both User ID and Serial Number');
+        return;
+    }
+    
+    // Beautiful loading with codex if available
+    if (window.beautifulLoadingCodex) {
+        await window.beautifulLoadingCodex.startLoadingSequence(null, () => {
+            console.log('🇺🇸 Checking Federal Banking Status...');
+        });
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE}/check-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userID, serialNumber })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            showStatusResult(result);
+        } else {
+            alert('❌ Status Check Failed: ' + result.message);
+        }
+    } catch (error) {
+        alert('🚫 Error checking status: ' + error.message);
+    }
+}
+
+function showStatusResult(statusData) {
+    // Create status result modal
+    const statusModal = document.createElement('div');
+    statusModal.className = 'status-result-modal';
+    statusModal.innerHTML = `
+        <div class="status-result-content">
+            <div class="usa-header">🇺🇸 LEARNING BANK USA - STATUS UPDATE 🇺🇸</div>
+            <div class="trust-line">IN GOD WE TRUST</div>
+            
+            <div class="applicant-info">
+                <h3>📋 Application Status for ${statusData.applicantName}</h3>
+                <p><strong>User ID:</strong> ${statusData.userID}</p>
+                <p><strong>Serial Number:</strong> ${statusData.serialNumber}</p>
+                <p><strong>Email:</strong> ${statusData.email}</p>
+                <p><strong>Submitted:</strong> ${new Date(statusData.submittedAt).toLocaleString()}</p>
+            </div>
+            
+            <div class="status-display">
+                <h2>${statusData.statusInfo.title}</h2>
+                <div class="status-badge status-${statusData.status}">${statusData.status.replace('_', ' ').toUpperCase()}</div>
+                
+                <div class="status-message">
+                    <p>${statusData.statusInfo.message}</p>
+                    <p><strong>Estimated Time:</strong> ${statusData.statusInfo.estimatedTime}</p>
+                    <p><strong>Next Steps:</strong> ${statusData.statusInfo.nextSteps}</p>
+                </div>
+                
+                ${statusData.status === 'approved' ? `
+                    <div class="approval-celebration">
+                        <h3>🎉 CONGRATULATIONS! 🎉</h3>
+                        <p>You can now <strong><a href="#" onclick="document.getElementById('loginBtn').click(); this.closest('.status-result-modal').remove();">LOGIN TO YOUR ACCOUNT</a></strong></p>
+                        ${statusData.statusInfo.approvedDetails ? `
+                            <p><small>Approved: ${new Date(statusData.statusInfo.approvedDetails.approvedAt).toLocaleString()}</small></p>
+                            <p><small>By: ${statusData.statusInfo.approvedDetails.approvedBy}</small></p>
+                        ` : ''}
+                    </div>
+                ` : ''}
+            </div>
+            
+            <div class="federal-notice">
+                <p>${statusData.federalNotice}</p>
+            </div>
+            
+            <button onclick="this.parentElement.parentElement.remove()" class="close-notification">
+                ${statusData.status === 'approved' ? 'PROCEED TO LOGIN' : 'CLOSE'} ✓
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(statusModal);
+    
+    // Auto-remove after 2 minutes if approved
+    if (statusData.status === 'approved') {
+        setTimeout(() => {
+            if (document.body.contains(statusModal)) {
+                document.body.removeChild(statusModal);
+            }
+        }, 120000);
+    }
+}
+
+// Add status check to main navigation
+function addStatusCheckToNav() {
+    const navMenu = document.querySelector('.nav-menu');
+    if (navMenu && !document.getElementById('statusCheckBtn')) {
+        const statusCheckItem = document.createElement('li');
+        statusCheckItem.innerHTML = '<a href="#" onclick="showStatusCheckModal()" id="statusCheckBtn">Check Status</a>';
+        navMenu.appendChild(statusCheckItem);
+    }
+}
+
+function showStatusCheckModal() {
+    // Create quick status check modal
+    const statusModal = document.createElement('div');
+    statusModal.className = 'status-check-modal modal';
+    statusModal.style.display = 'block';
+    statusModal.innerHTML = `
+        <div class="modal-content">
+            <span class="close" onclick="this.parentElement.parentElement.remove()">&times;</span>
+            <div class="usa-header">🇺🇸 CHECK YOUR APPLICATION STATUS</div>
+            <div class="trust-line">IN GOD WE TRUST</div>
+            
+            <div class="form-group">
+                <label>User ID:</label>
+                <input type="text" id="quickStatusUserID" placeholder="Enter your User ID (e.g., USA123456789)">
+            </div>
+            <div class="form-group">
+                <label>Serial Number:</label>
+                <input type="text" id="quickStatusSerial" placeholder="Enter your Serial Number (e.g., LB1724ABCD)">
+            </div>
+            <button onclick="checkApplicationStatus(); this.closest('.status-check-modal').remove();" class="btn btn-primary">
+                🔍 Check Status
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(statusModal);
+}
+
 // Initialize currency converter on page load
 document.addEventListener('DOMContentLoaded', () => {
     convertCurrency();
     setupFormValidation();
+    addStatusCheckToNav();
     
     // Add some interactive animations
     const serviceCards = document.querySelectorAll('.service-card');

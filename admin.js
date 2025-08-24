@@ -1,8 +1,11 @@
-// Admin Panel JavaScript
+// GOD MODE - ADMIN PANEL WITH BEAUTIFUL LOADING CODEX
+// IN GOD WE TRUST - USA FEDERAL ADMIN SYSTEM
 const API_BASE = 'http://localhost:3000/api';
 let adminToken = null;
 let allUsers = [];
 let allTransactions = [];
+let allLoanApplications = [];
+let beautifulCodex = null;
 
 // Admin credentials (in production, this would be secure)
 const ADMIN_CREDENTIALS = {
@@ -10,8 +13,12 @@ const ADMIN_CREDENTIALS = {
     password: 'admin123'
 };
 
-// Initialize admin panel
+// Initialize admin panel with GOD MODE
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize beautiful loading codex
+    if (typeof BeautifulLoadingCodex !== 'undefined') {
+        beautifulCodex = new BeautifulLoadingCodex();
+    }
     initializeAdminPanel();
     setupEventListeners();
 });
@@ -27,8 +34,13 @@ function initializeAdminPanel() {
 }
 
 function setupEventListeners() {
-    // Admin login
+    // Admin login - BEAUTIFUL CODEX ENHANCED
     document.getElementById('adminLoginForm').addEventListener('submit', handleAdminLogin);
+    
+    // Loan management
+    document.getElementById('refreshLoansBtn')?.addEventListener('click', loadLoanApplications);
+    document.getElementById('filterLoans')?.addEventListener('click', filterLoanApplications);
+    document.getElementById('exportLoansBtn')?.addEventListener('click', exportLoanApplications);
     
     // Logout
     document.getElementById('adminLogout').addEventListener('click', handleAdminLogout);
@@ -71,7 +83,24 @@ function setupEventListeners() {
     document.getElementById('exportTransactionsBtn').addEventListener('click', exportTransactions);
 }
 
-// Authentication
+// GOD MODE - BEAUTIFUL CODEX ADMIN LOGIN
+async function adminLoginWithCodex(button) {
+    if (beautifulCodex && beautifulCodex.isLoading) return;
+    
+    // Start beautiful loading sequence
+    if (beautifulCodex) {
+        await beautifulCodex.startLoadingSequence(null, () => {
+            console.log('🇺🇸 Federal Admin System Loaded - IN GOD WE TRUST');
+        });
+    }
+    
+    // Continue with normal login process
+    const form = button.closest('form');
+    const event = new Event('submit');
+    form.dispatchEvent(event);
+}
+
+// Authentication - Enhanced with backwards access flow
 async function handleAdminLogin(e) {
     e.preventDefault();
     
@@ -82,12 +111,12 @@ async function handleAdminLogin(e) {
     const loginText = loginBtn.querySelector('.login-text');
     const loginLoader = loginBtn.querySelector('.login-loader');
     
-    // Show loading state
+    // Show loading state - USA themed
     loginText.style.display = 'none';
     loginLoader.style.display = 'inline';
     loginBtn.disabled = true;
     
-    // Simulate authentication delay
+    // Beautiful backwards authentication delay (GOD MODE)
     setTimeout(() => {
         if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
             // Generate admin token (in production, this would come from server)
@@ -96,16 +125,16 @@ async function handleAdminLogin(e) {
             
             showAdminDashboard();
             loadDashboardData();
-            showMessage('Admin login successful!', 'success');
+            showMessage('🇺🇸 Federal Admin Access Granted - IN GOD WE TRUST', 'success');
         } else {
-            showMessage('Invalid admin credentials!', 'error');
+            showMessage('🚫 Federal Access Denied - Invalid Credentials', 'error');
         }
         
         // Reset button state
         loginText.style.display = 'inline';
         loginLoader.style.display = 'none';
         loginBtn.disabled = false;
-    }, 1000);
+    }, 2000); // Longer delay for beautiful backwards effect
 }
 
 function handleAdminLogout() {
@@ -135,13 +164,16 @@ function switchSection(sectionName) {
     });
     document.getElementById(`${sectionName}Section`).classList.add('active');
     
-    // Load section-specific data
+    // Load section-specific data with beautiful loading
     switch(sectionName) {
         case 'users':
             loadUsers();
             break;
         case 'transactions':
             loadTransactions();
+            break;
+        case 'loans':
+            loadLoanApplications();
             break;
         case 'analytics':
             loadAnalytics();
@@ -507,9 +539,237 @@ function showMessage(message, type = 'info') {
     }, 3000);
 }
 
+// LOAN MANAGEMENT SYSTEM - INTEGRATED INTO ADMIN
+async function loadLoanApplications() {
+    const tbody = document.getElementById('loansTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '<tr><td colspan="9">🇺🇸 Loading Federal Loan Applications...</td></tr>';
+    
+    // Beautiful loading delay
+    if (beautifulCodex) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+    
+    // Simulate loan application data with USA compliance
+    const loanApplications = [
+        { 
+            id: 'LB001USA2025', 
+            firstName: 'John', 
+            lastName: 'Washington', 
+            email: 'john.washington@email.com',
+            loanAmount: 15000,
+            purpose: 'Home Improvement',
+            annualIncome: 65000,
+            status: 'pending',
+            submittedAt: '2025-08-21 14:30',
+            userID: 'USA164523789',
+            serialNumber: 'LB1724ABCD'
+        },
+        {
+            id: 'LB002USA2025',
+            firstName: 'Sarah', 
+            lastName: 'Jefferson',
+            email: 'sarah.jefferson@email.com',
+            loanAmount: 25000,
+            purpose: 'Business',
+            annualIncome: 85000,
+            status: 'under_review',
+            submittedAt: '2025-08-20 09:15',
+            userID: 'USA164587234',
+            serialNumber: 'LB1724EFGH'
+        },
+        {
+            id: 'LB003USA2025',
+            firstName: 'Michael',
+            lastName: 'Lincoln',
+            email: 'michael.lincoln@email.com',
+            loanAmount: 8000,
+            purpose: 'Medical Expenses',
+            annualIncome: 45000,
+            status: 'approved',
+            submittedAt: '2025-08-19 16:45',
+            userID: 'USA164598765',
+            serialNumber: 'LB1724IJKL'
+        }
+    ];
+    
+    allLoanApplications = loanApplications;
+    displayLoanApplications(loanApplications);
+    updateLoanStats(loanApplications);
+}
+
+function displayLoanApplications(loans) {
+    const tbody = document.getElementById('loansTableBody');
+    if (!tbody) return;
+    
+    if (loans.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9">No loan applications found</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = loans.map(loan => `
+        <tr>
+            <td>${loan.id}</td>
+            <td>${loan.firstName} ${loan.lastName}</td>
+            <td>${loan.email}</td>
+            <td>$${loan.loanAmount.toLocaleString()}</td>
+            <td>${loan.purpose}</td>
+            <td>$${loan.annualIncome.toLocaleString()}</td>
+            <td><span class="status-badge loan-status-${loan.status}">${loan.status.replace('_', ' ').toUpperCase()}</span></td>
+            <td>${loan.submittedAt}</td>
+            <td>
+                <button class="action-btn view" onclick="viewLoanApplication('${loan.id}')">👁️ View</button>
+                <button class="action-btn edit" onclick="updateLoanStatus('${loan.id}')">✏️ Update</button>
+                <button class="action-btn ${loan.status === 'approved' ? 'fund' : 'approve'}" onclick="approveLoan('${loan.id}')">
+                    ${loan.status === 'approved' ? '💰 Fund' : '✅ Approve'}
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function updateLoanStats(loans) {
+    const totalApplications = loans.length;
+    const pendingLoans = loans.filter(l => l.status === 'pending' || l.status === 'under_review').length;
+    const approvedLoans = loans.filter(l => l.status === 'approved' || l.status === 'funded').length;
+    const totalAmount = loans.reduce((sum, loan) => sum + loan.loanAmount, 0);
+    
+    // Update stats with animation
+    document.getElementById('totalLoanApplications')?.textContent = totalApplications;
+    document.getElementById('pendingLoans')?.textContent = pendingLoans;
+    document.getElementById('approvedLoans')?.textContent = approvedLoans;
+    document.getElementById('totalLoanAmount')?.textContent = `$${totalAmount.toLocaleString()}`;
+}
+
+function filterLoanApplications() {
+    const searchTerm = document.getElementById('loanSearch')?.value.toLowerCase() || '';
+    const statusFilter = document.getElementById('loanStatusFilter')?.value || '';
+    const amountFilter = document.getElementById('loanAmountFilter')?.value || '';
+    
+    let filteredLoans = allLoanApplications;
+    
+    if (searchTerm) {
+        filteredLoans = filteredLoans.filter(loan => 
+            loan.firstName.toLowerCase().includes(searchTerm) ||
+            loan.lastName.toLowerCase().includes(searchTerm) ||
+            loan.email.toLowerCase().includes(searchTerm) ||
+            loan.id.toLowerCase().includes(searchTerm)
+        );
+    }
+    
+    if (statusFilter) {
+        filteredLoans = filteredLoans.filter(loan => loan.status === statusFilter);
+    }
+    
+    if (amountFilter) {
+        const [min, max] = amountFilter.split('-').map(n => parseInt(n) || Infinity);
+        filteredLoans = filteredLoans.filter(loan => {
+            if (amountFilter === '30000+') return loan.loanAmount >= 30000;
+            return loan.loanAmount >= min && loan.loanAmount <= max;
+        });
+    }
+    
+    displayLoanApplications(filteredLoans);
+}
+
+function viewLoanApplication(loanId) {
+    const loan = allLoanApplications.find(l => l.id === loanId);
+    if (!loan) return;
+    
+    // Show detailed loan information modal
+    const modal = document.getElementById('loanDetailModal');
+    const content = document.getElementById('loanDetailContent');
+    
+    if (modal && content) {
+        content.innerHTML = `
+            <div class="loan-detail-grid">
+                <div class="loan-basic-info">
+                    <h3>🇺🇸 Federal Loan Application - IN GOD WE TRUST</h3>
+                    <p><strong>Application ID:</strong> ${loan.id}</p>
+                    <p><strong>User ID:</strong> ${loan.userID}</p>
+                    <p><strong>Serial Number:</strong> ${loan.serialNumber}</p>
+                    <p><strong>Submitted:</strong> ${loan.submittedAt}</p>
+                </div>
+                
+                <div class="loan-applicant-info">
+                    <h4>👤 Applicant Information</h4>
+                    <p><strong>Name:</strong> ${loan.firstName} ${loan.lastName}</p>
+                    <p><strong>Email:</strong> ${loan.email}</p>
+                    <p><strong>Annual Income:</strong> $${loan.annualIncome.toLocaleString()}</p>
+                </div>
+                
+                <div class="loan-request-info">
+                    <h4>💰 Loan Request</h4>
+                    <p><strong>Amount:</strong> $${loan.loanAmount.toLocaleString()}</p>
+                    <p><strong>Purpose:</strong> ${loan.purpose}</p>
+                    <p><strong>Status:</strong> <span class="status-badge loan-status-${loan.status}">${loan.status.replace('_', ' ').toUpperCase()}</span></p>
+                </div>
+            </div>
+        `;
+        
+        modal.style.display = 'block';
+    }
+}
+
+function approveLoan(loanId) {
+    const loan = allLoanApplications.find(l => l.id === loanId);
+    if (!loan) return;
+    
+    if (loan.status === 'approved') {
+        // Fund the loan
+        loan.status = 'funded';
+        loan.fundedAt = new Date().toISOString();
+        showMessage(`💰 Loan ${loanId} has been funded! - IN GOD WE TRUST`, 'success');
+    } else {
+        // Approve the loan
+        loan.status = 'approved';
+        loan.approvedAt = new Date().toISOString();
+        showMessage(`✅ Loan ${loanId} has been approved! - Federal Banking Authority`, 'success');
+    }
+    
+    displayLoanApplications(allLoanApplications);
+    updateLoanStats(allLoanApplications);
+}
+
+function updateLoanStatus(loanId) {
+    const loan = allLoanApplications.find(l => l.id === loanId);
+    if (!loan) return;
+    
+    // Show update modal or prompt
+    const newStatus = prompt('Enter new status (pending, under_review, approved, rejected, funded):', loan.status);
+    if (newStatus && ['pending', 'under_review', 'approved', 'rejected', 'funded'].includes(newStatus)) {
+        loan.status = newStatus;
+        loan.updatedAt = new Date().toISOString();
+        displayLoanApplications(allLoanApplications);
+        updateLoanStats(allLoanApplications);
+        showMessage(`Loan ${loanId} status updated to ${newStatus.toUpperCase()}`, 'success');
+    }
+}
+
+function exportLoanApplications() {
+    const csv = convertToCSV(allLoanApplications, 
+        ['id', 'firstName', 'lastName', 'email', 'loanAmount', 'purpose', 'annualIncome', 'status', 'submittedAt']);
+    downloadCSV(csv, 'loan_applications_export.csv');
+    showMessage('🇺🇸 Federal Loan Applications Exported - IN GOD WE TRUST', 'success');
+}
+
+// TEST ZONE USER SIGNUP MANAGEMENT
+function loadTestZoneSignups() {
+    // This would load test zone signups from the beautiful codex system
+    if (window.testZoneSignup && window.testZoneSignup.testUsers) {
+        const testUsers = window.testZoneSignup.testUsers;
+        console.log('Test Zone Users:', testUsers);
+        // Add to admin interface
+    }
+}
+
 // Real-time updates (simulated)
 setInterval(() => {
-    if (document.getElementById('dashboardSection').classList.contains('active')) {
+    if (document.getElementById('dashboardSection')?.classList.contains('active')) {
         loadSystemStats();
+    }
+    if (document.getElementById('loansSection')?.classList.contains('active')) {
+        updateLoanStats(allLoanApplications);
     }
 }, 30000); // Update every 30 seconds

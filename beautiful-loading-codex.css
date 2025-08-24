@@ -1,0 +1,422 @@
+/* GOD MODE - BEAUTIFUL LOADING CODEX STYLES */
+/* IN GOD WE TRUST - USA ULTRA-REALISTIC DESIGN */
+
+.beautiful-loading-codex {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: 
+        radial-gradient(ellipse at top, rgba(0, 0, 139, 0.9) 0%, transparent 70%),
+        radial-gradient(ellipse at bottom, rgba(220, 20, 60, 0.8) 0%, transparent 70%),
+        linear-gradient(135deg, #000428 0%, #004e92 50%, #8B0000 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+    animation: codexEntrance 1s ease-out;
+}
+
+@keyframes codexEntrance {
+    0% { 
+        opacity: 0; 
+        transform: scale(0.9);
+    }
+    100% { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+}
+
+.codex-container {
+    background: 
+        linear-gradient(135deg, rgba(0, 0, 139, 0.95) 0%, rgba(220, 20, 60, 0.85) 100%);
+    border: 3px solid #FFD700;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 
+        0 0 50px rgba(255, 215, 0, 0.6),
+        0 0 100px rgba(0, 0, 139, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.3);
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* USA FLAG ANIMATION */
+.usa-flag-animation {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 80px;
+    height: 60px;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.flag-stripe {
+    height: 15px;
+    width: 100%;
+}
+
+.flag-stripe.red {
+    background: linear-gradient(90deg, #B22234, #DC143C);
+}
+
+.flag-stripe.white {
+    background: linear-gradient(90deg, #FFFFFF, #F0F0F0);
+}
+
+.flag-stars {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    color: #FFD700;
+    font-size: 8px;
+    animation: starTwinkle 2s ease-in-out infinite;
+}
+
+@keyframes flagWave {
+    0%, 100% { transform: rotateY(0deg); }
+    50% { transform: rotateY(15deg); }
+}
+
+@keyframes starTwinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* LOADING TITLE */
+.loading-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #FFD700;
+    text-shadow: 
+        0 0 10px rgba(255, 215, 0, 1),
+        0 0 20px rgba(255, 215, 0, 0.8),
+        0 0 30px rgba(255, 215, 0, 0.6);
+    margin-bottom: 10px;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+.trust-motto {
+    font-family: 'Inter', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-shadow: 
+        0 0 5px rgba(255, 255, 255, 0.8),
+        0 0 10px rgba(0, 0, 139, 0.6);
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+@keyframes titleGlow {
+    0% { 
+        text-shadow: 
+            0 0 10px rgba(255, 215, 0, 1),
+            0 0 20px rgba(255, 215, 0, 0.8),
+            0 0 30px rgba(255, 215, 0, 0.6);
+    }
+    100% { 
+        text-shadow: 
+            0 0 20px rgba(255, 215, 0, 1),
+            0 0 40px rgba(255, 215, 0, 1),
+            0 0 60px rgba(255, 215, 0, 0.8);
+    }
+}
+
+/* NEURAL PROGRESS BAR */
+.progress-container {
+    margin: 20px 0;
+}
+
+.neural-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FFFFFF, #B22234);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    animation: progressShine 1.5s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+    0%, 100% { 
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    }
+    50% { 
+        box-shadow: 0 0 25px rgba(255, 215, 0, 1);
+    }
+}
+
+/* LOADING MESSAGE */
+.loading-message {
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 20px 0;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes messageGlow {
+    0% { 
+        opacity: 0.7; 
+        transform: translateY(5px);
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}
+
+/* QUANTUM PARTICLES */
+.quantum-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: radial-gradient(circle, #FFD700, transparent);
+    border-radius: 50%;
+    animation: particleFloat 3s ease-in-out infinite;
+}
+
+.particle:nth-child(1) {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    top: 60%;
+    right: 15%;
+    animation-delay: 1s;
+}
+
+.particle:nth-child(3) {
+    bottom: 30%;
+    left: 20%;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(4) {
+    top: 40%;
+    right: 30%;
+    animation-delay: 1.5s;
+}
+
+@keyframes particleFloat {
+    0%, 100% { 
+        transform: translateY(0) scale(1);
+        opacity: 0.6;
+    }
+    50% { 
+        transform: translateY(-20px) scale(1.2);
+        opacity: 1;
+    }
+}
+
+/* FEDERAL SEAL */
+.federal-seal {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.8;
+}
+
+.seal-ring {
+    font-size: 1.5rem;
+    color: #FFD700;
+    animation: sealRotate 4s linear infinite;
+}
+
+.seal-text {
+    font-size: 0.6rem;
+    color: #FFFFFF;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-top: 2px;
+}
+
+@keyframes sealRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes sealPulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% { 
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
+
+@keyframes codexComplete {
+    0% { 
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% { 
+        opacity: 0;
+        transform: scale(1.1);
+    }
+}
+
+/* TEST ZONE NOTIFICATION */
+.test-zone-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    background: 
+        linear-gradient(135deg, rgba(0, 0, 139, 0.98) 0%, rgba(220, 20, 60, 0.95) 100%);
+    border: 3px solid #FFD700;
+    border-radius: 15px;
+    box-shadow: 
+        0 0 50px rgba(255, 215, 0, 0.8),
+        0 0 100px rgba(0, 0, 139, 0.6);
+    animation: notificationEntrance 0.8s ease-out;
+}
+
+@keyframes notificationEntrance {
+    0% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.notification-content {
+    padding: 30px;
+    text-align: center;
+    color: #FFFFFF;
+    max-width: 400px;
+}
+
+.usa-header {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #FFD700;
+    margin-bottom: 5px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+}
+
+.trust-line {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.user-details {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.user-details p {
+    margin: 8px 0;
+    font-family: 'Courier New', monospace;
+}
+
+.check-back-info {
+    text-align: left;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.check-back-info h4 {
+    color: #FFD700;
+    margin-bottom: 10px;
+}
+
+.check-back-info p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.federal-notice {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 215, 0, 0.3);
+    opacity: 0.8;
+}
+
+.close-notification {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: none;
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.close-notification:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 25px rgba(255, 215, 0, 0.8);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 480px) {
+    .codex-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .loading-title {
+        font-size: 1.4rem;
+    }
+    
+    .notification-content {
+        padding: 20px;
+        max-width: 90vw;
+    }
+}

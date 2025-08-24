@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Learning Bank</title>
+    <title>🇺🇸 ADMIN PANEL - LEARNING BANK USA - IN GOD WE TRUST</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="beautiful-loading-codex.css">
+    <script src="beautiful-loading-codex.js"></script>
 </head>
 <body>
     <!-- Admin Login Screen -->
     <div id="adminLogin" class="admin-login-screen">
         <div class="admin-login-container">
-            <div class="admin-header">
-                <h1>🏦 Learning Bank</h1>
-                <h2>Admin Control Panel</h2>
+            <div class="admin-header usa-admin-header">
+                <div class="usa-flag-mini">🇺🇸</div>
+                <h1>🏦 LEARNING BANK USA</h1>
+                <div class="trust-motto-admin">IN GOD WE TRUST</div>
+                <h2>FEDERAL ADMINISTRATOR CONTROL PANEL</h2>
+                <div class="federal-badge">🏛️ FDIC INSURED</div>
             </div>
             <form id="adminLoginForm" class="admin-login-form">
                 <div class="form-group">
@@ -24,9 +29,14 @@
                     <label for="adminPassword">Admin Password</label>
                     <input type="password" id="adminPassword" name="password" required placeholder="Enter admin password">
                 </div>
-                <button type="submit" class="btn btn-primary admin-login-btn">
-                    <span class="login-text">Access Admin Panel</span>
-                    <span class="login-loader" style="display: none;">Authenticating...</span>
+                <button type="submit" class="btn btn-primary admin-login-btn god-mode-admin-btn" onclick="adminLoginWithCodex(this)">
+                    <span class="login-text">🇺🇸 Access Federal Admin Panel</span>
+                    <span class="login-loader" style="display: none;">IN GOD WE TRUST - Authenticating...</span>
+                    <div class="admin-loading-pattern hidden">
+                        <div class="federal-neural-pulse"></div>
+                        <div class="usa-quantum-spinner"></div>
+                        <div class="admin-fractal-loader"></div>
+                    </div>
                 </button>
                 <div class="admin-demo-credentials">
                     <p>Demo Credentials:</p>
